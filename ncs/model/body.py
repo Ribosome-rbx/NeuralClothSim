@@ -15,18 +15,18 @@ class Body:
         self.body_model = body_model
         # Read body model
         with np.load(body_model) as model:
-            self.vertices = model["vertices"]
-            self.faces = triangulate(model["faces"])
-            self.blend_weights = model["blend_weights"].astype(np.float32)
-            self.joints = np.float32(model["joints"])
-            self.rest_pose = model["rest_pose"]
-            self.parents = model["parents"]
+            self.vertices = model["vertices"] # (6890, 3)
+            self.faces = triangulate(model["faces"]) # (13776, 3)
+            self.blend_weights = model["blend_weights"].astype(np.float32) # (6890, 24)
+            self.joints = np.float32(model["joints"]) # (24, 3)
+            self.rest_pose = model["rest_pose"] # (24, 3)
+            self.parents = model["parents"] # (24,) # body['kintree_table'][0,:]
             if "no_collide_vertices" in model:
                 self.no_collide_vertices = model["no_collide_vertices"]
                 assert not set(self.collision_vertices) == set(
                     range(self.num_verts)
                 ), "Error! There is no collision vertices."
-        self.input_joints = input_joints or list(range(self.num_joints))
+        self.input_joints = input_joints or list(range(self.num_joints)) #  [0, 1, 2, 3, 4, 5, 6, 9, 12, 13, 14, 16, 17, 18, 19]
         self.tree_to_depth()
         # Infer rotation mode ('axis_angle' or 'quaternion')
         n_dims = self.rest_pose.shape[1]

@@ -141,6 +141,7 @@ def lbs(vertices, matrices, blend_weights=None):
         matrices = blend_weights @ matrices
     matrices = tf.reshape(matrices, (*tf_shape(matrices)[:-1], 3, 4))
     rotations, translations = tf.split(matrices, [3, 1], axis=-1)
+    # breakpoint()
     vertices = rotations @ vertices[..., None]
     vertices += translations
     return vertices[..., 0]

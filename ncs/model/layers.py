@@ -89,6 +89,7 @@ class LBS(Layer):
         if self.trainable:
             blend_weights = tf.nn.softmax(self.blend_weights)
             return lbs(vertices, matrices, blend_weights)
+        # breakpoint()
         return lbs(vertices, matrices, self.blend_weights)
 
 

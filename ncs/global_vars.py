@@ -2,6 +2,7 @@ import os
 
 # Paths
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+SCANDATASET_DIR = os.path.join(ROOT_DIR, "scan_data")
 BODY_DIR = os.path.join(ROOT_DIR, "body_models")
 CHECKPOINTS_DIR = os.path.join(ROOT_DIR, "checkpoints")
 DATA_DIR = os.path.join(ROOT_DIR, "data")
@@ -12,7 +13,7 @@ SMPL_DIR = os.path.join(ROOT_DIR, "smpl")
 TMP_DIR = os.path.join(ROOT_DIR, "tmp")
 
 # Skeletons
-NUM_JOINTS = {"smpl": 24, "mixamo": 65}
+NUM_JOINTS = {"smpl": 24, "mixamo": 65, "smplx": 55}
 
 # Physick
 GRAVITY = 9.81

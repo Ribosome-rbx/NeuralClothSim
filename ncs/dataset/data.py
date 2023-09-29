@@ -6,7 +6,7 @@ from math import ceil
 
 from tensorflow.keras.utils import Sequence
 
-from global_vars import DATA_DIR, TXT_DIR, BODY_DIR
+from global_vars import DATA_DIR, TXT_DIR, BODY_DIR, SCANDATASET_DIR
 from dataset.sequence import PoseSequence
 
 
@@ -33,10 +33,13 @@ class Data(Sequence):
     # Read names of sequence files from a txt
     def read_txt(self):
         with open(self.txt, "r") as f:
-            self.sequences = [
-                os.path.join(DATA_DIR, self.config.data.dataset, line.replace("\n", ""))
-                for line in f.readlines()
-            ]
+            if not self.mode == "temp":
+                self.sequences = [
+                    os.path.join(DATA_DIR, self.config.data.dataset, line.replace("\n", ""))
+                    for line in f.readlines()
+                ]
+            else:
+                self.sequences = [os.path.join(SCANDATASET_DIR, self.config.name, self.config.name+".npz")]
 
     # Loads the sequence data into PoseSequence objects (See 'sequence.py')
     def read_sequences(self):
@@ -57,10 +60,10 @@ class Data(Sequence):
     def make_reflection_map(self):
         self.reflection_map = [None] * len(self.joint_names)
         for name, idx in self.joint_names.items():
-            if "L" in name:
-                name = name.replace("L", "R")
-            elif "R" in name:
-                name = name.replace("R", "L")
+            if "L" in name[0]:
+                name = name[0].replace("L", "R") + name[1:]
+            elif "R" in name[0]:
+                name = name[0].replace("R", "L") + name[1:]
             self.reflection_map[idx] = self.joint_names[name]
 
     @property

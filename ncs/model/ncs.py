@@ -5,17 +5,26 @@ from tensorflow.keras.layers import GRU
 from loss.losses import *
 from loss.metrics import *
 from model.body import Body
+import numpy as np
 
 from model.cloth import Garment
 from .layers import *
-from global_vars import BODY_DIR
+from global_vars import BODY_DIR, SCANDATASET_DIR
 
+def write_obj(vertices, faces, filename):
+    with open(filename, 'w') as f:
+        for vertex in vertices:
+            f.write('v {} {} {}\n'.format(vertex[0], vertex[1], vertex[2]))
+        
+        for face in faces:
+            f.write('f {} {} {}\n'.format(face[0] + 1, face[1] + 1, face[2] + 1))
 
 class NCS(tf.keras.Model):
     def __init__(self, config, **kwargs):
         super().__init__(**kwargs)
         self.config = config
-        folder = os.path.join(BODY_DIR, config.body.model)
+        # folder = os.path.join(BODY_DIR, config.body.model)
+        folder = os.path.join(SCANDATASET_DIR, config.body.model)
         body_model = os.path.join(folder, "body.npz")
         garment_obj = os.path.join(folder, config.garment.name)
         # Read body
@@ -99,7 +108,7 @@ class NCS(tf.keras.Model):
         self.bending_loss = BendingLoss(self.garment)
         self.bending_metric = MyMetric(name="Bending")
         # Collision
-        self.collision = Collision(self.body, use_ray=False, name="Collision")
+        self.collision = Collision(self.body, use_ray=True, name="Collision")
         self.collision_loss = CollisionLoss(
             self.body, collision_threshold=self.config.loss.collision_threshold
         )
@@ -242,10 +251,15 @@ class NCS(tf.keras.Model):
         deformations = self.call_network(X, w=w, training=training)
         # Compute body LBS
         body = self.lbs_body(self.body.vertices, matrices[:, -1])
+        store = False
+        # breakpoint()
+        # if store: write_obj(np.array(body[0]), self.body.faces, r"/home/borong/Desktop/NeuralClothSim/results/00127_Inner/body_fk.obj")
         # Compute garment LBS
         unskinned = self.garment.vertices + deformations
         matrices = tf.gather(matrices, self.body.input_joints, axis=-3)
         garment = self.lbs_cloth(unskinned, matrices[:, -3:])
+        # if store: write_obj(np.array(garment[0,-1]), self.garment.faces, r"/home/borong/Desktop/NeuralClothSim/results/00127_Inner/cloth_fk.obj")
+        # breakpoint()
         return body, garment, unskinned[:, -1]
 
     def call_inputs(self, poses, trans):

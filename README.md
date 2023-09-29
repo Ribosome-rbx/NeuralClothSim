@@ -1,3 +1,8 @@
+switch to 11.8
+```
+source /home/borong/.bashrc
+```
+
 ## Neural Cloth Simulation
 
 <img src="https://raw.githubusercontent.com/hbertiche/hbertiche.github.io/main/imgs/publications/NCS.png">

@@ -2,6 +2,8 @@ import os
 import sys
 import argparse
 import tensorflow as tf
+import numpy as np
+import shutil
 
 from dataset.data import Data
 from model.ncs import NCS
@@ -25,6 +27,7 @@ def main(config, w=1.0):
     # Predict & store
     print("Predicting...")
     folder = os.path.join(RESULTS_DIR, config.name)
+    if os.path.isdir(folder): shutil.rmtree(folder)
     # Filenames for results
     filenames = {
         "body": os.path.join(folder, "body.pc2"),
@@ -53,17 +56,27 @@ def main(config, w=1.0):
         writePC2Frames(filenames["cloth_unskinned"], unskinned.numpy())
     print("")
 
+    # transfer pc2 into npy
+    from utils.IO import readPC2
+    for f in ["body", "cloth"]:
+        file = readPC2(filenames[f])
+        np.save(filenames[f].replace(".pc2", ".npy"), file['V'])
+    print("pc2 to npy --> Done!")
+
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--config", type=str, required=True)
-    parser.add_argument("--gpu_id", type=str, default="")
-    parser.add_argument("--motion", type=float, default=1.0)
-    opts = parser.parse_args()
+    folder_name = "00123_lower"
+    type =  folder_name.split("_")[-1].lower()
+
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument("--config", type=str, required=True)
+    # parser.add_argument("--gpu_id", type=str, default="")
+    # parser.add_argument("--motion", type=float, default=1.0)
+    # opts = parser.parse_args()
 
     # Set GPU
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-    os.environ["CUDA_VISIBLE_DEVICES"] = opts.gpu_id
+    os.environ["CUDA_VISIBLE_DEVICES"] = '1' # opts.gpu_id
 
     # Limit VRAM usage
     gpus = tf.config.experimental.list_physical_devices("GPU")
@@ -73,5 +86,8 @@ if __name__ == "__main__":
         print("No GPU detected")
         sys.exit()
 
-    config = MainConfig(opts.config)
-    main(config, w=opts.motion)
+    config = MainConfig('configs/smplx.json') # opts.config
+    config.name = folder_name
+    config.body.model = folder_name
+    config.garment.name = type
+    main(config, w=1.0) # opts.motion

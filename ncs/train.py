@@ -3,6 +3,7 @@ import sys
 import argparse
 from shutil import rmtree
 import tensorflow as tf
+import shutil
 
 from model.ncs import NCS
 from dataset.data import Data
@@ -13,7 +14,7 @@ from global_vars import LOGS_DIR, CHECKPOINTS_DIR
 def make_model(config):
     model = NCS(config)
     print("Building model...")
-    model.build(input_shape=config.input_shape)
+    model.build(input_shape=config.input_shape) # [(None, 11, 24, 4), (None, 11, 3)]
     model.summary()
     print("Compiling model...")
     optimizer = tf.keras.optimizers.Adam(learning_rate=config.learning_rate)
@@ -26,12 +27,15 @@ def make_model(config):
 
 def main(config):
     # Remove previous runs logs and checkpoints for this experiment
-    log_dir = os.path.join(LOGS_DIR, config.name)
+    log_dir = os.path.join(LOGS_DIR, config.name) # '/home/borong/Desktop/NeuralClothSim/logs'
     checkpoint_dir = os.path.join(CHECKPOINTS_DIR, config.name)
     if os.path.isdir(log_dir) or os.path.isdir(checkpoint_dir):
         print(f"There already are logs/checkpoints for an experiment with the same name. Experiment name: {config.name}")
         print("Please remove or rename the logs/checkpoints. Alternatively, rename the experiment (JSON file name).")
-        return
+        # return
+        if os.path.isdir(log_dir): shutil.rmtree(log_dir)
+        if os.path.isdir(checkpoint_dir): shutil.rmtree(checkpoint_dir)
+
 
     print("Initializing model...")
     if len(gpus) > 1:
@@ -65,14 +69,17 @@ def main(config):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--config", type=str, required=True)
-    parser.add_argument("--gpu_id", type=str, required=True)
-    opts = parser.parse_args()
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument("--config", type=str, required=True)
+    # parser.add_argument("--gpu_id", type=str, required=True)
+    # opts = parser.parse_args()
+    folder_name = "00123_lower"
+
+    type =  folder_name.split("_")[-1].lower()
 
     # Set GPU
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-    os.environ["CUDA_VISIBLE_DEVICES"] = opts.gpu_id
+    os.environ["CUDA_VISIBLE_DEVICES"] = '0' # opts.gpu_id
 
     # Limit VRAM usage
     gpus = tf.config.experimental.list_physical_devices("GPU")
@@ -82,5 +89,8 @@ if __name__ == "__main__":
         print("No GPU detected")
         sys.exit()
 
-    config = MainConfig(opts.config)
+    config = MainConfig('configs/smplx.json') # opts.config
+    config.name = folder_name
+    config.body.model = folder_name
+    config.garment.name = type
     main(config)
