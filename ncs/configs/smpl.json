@@ -3,7 +3,7 @@
         "epochs": 5000,
         "batch_size": 32,
         "learning_rate": 1e-3,
-        "temporal_window_size": 0.5,
+        "temporal_window_size": 2,
         "reflect_probability": 0.0,
         "motion_augmentation": 0.0,
         "checkpoint": null
@@ -19,9 +19,9 @@
     },
     "data": {
         "dataset": "smpl",
-        "train": "toy.txt",
-        "validation": "toy.txt",
-        "test": "toy.txt",
+        "train": "train.txt",
+        "validation": "vali.txt",
+        "test": "test.txt",
         "fps": 15
     },
     "model": {

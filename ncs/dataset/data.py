@@ -1,5 +1,6 @@
 import os
 import json
+import glob
 from random import shuffle
 import numpy as np
 from math import ceil
@@ -33,13 +34,27 @@ class Data(Sequence):
     # Read names of sequence files from a txt
     def read_txt(self):
         with open(self.txt, "r") as f:
-            if not self.mode == "temp":
-                self.sequences = [
-                    os.path.join(DATA_DIR, self.config.data.dataset, line.replace("\n", ""))
-                    for line in f.readlines()
-                ]
-            else:
-                self.sequences = [os.path.join(SCANDATASET_DIR, self.config.name, self.config.name+".npz")]
+            # if not self.mode == "test":
+            #     self.sequences = [
+            #         os.path.join(DATA_DIR, self.config.data.dataset, line.replace("\n", ""))
+            #         for line in f.readlines()
+            #     ]
+            # else:
+            #     self.sequences = [os.path.join(SCANDATASET_DIR, self.config.name, self.config.name+".npz")]
+            self.sequences = [
+                os.path.join(DATA_DIR, self.config.data.dataset, line.replace("\n", ""))
+                for line in f.readlines()
+            ]
+            self.takes = self.sequences
+        
+        # if self.mode == "test":
+        #     data_dir  = f"{SCANDATASET_DIR}/{self.config.name}/Take*.npz"
+        #     self.sequences = sorted(glob.glob(data_dir))
+        #     self.takes = sorted(glob.glob(data_dir))
+
+
+
+
 
     # Loads the sequence data into PoseSequence objects (See 'sequence.py')
     def read_sequences(self):

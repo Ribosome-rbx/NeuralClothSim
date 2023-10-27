@@ -1,9 +1,9 @@
 {
     "experiment": {
-        "epochs": 5000,
-        "batch_size": 32,
+        "epochs": 100, 
+        "batch_size": 128,
         "learning_rate": 1e-3,
-        "temporal_window_size": 0.5,
+        "temporal_window_size": 1,
         "reflect_probability": 0.0,
         "motion_augmentation": 0.0,
         "checkpoint": null
@@ -19,8 +19,8 @@
     },
     "data": {
         "dataset": "smplx",
-        "train": "test.txt",
-        "validation": "test.txt",
+        "train": "train.txt",
+        "validation": "vali.txt",
         "test": "test.txt",
         "fps": 15
     },
