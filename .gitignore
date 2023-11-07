@@ -3,3 +3,6 @@ checkpoints
 logs
 data
 backup
+scan_data
+results
+imgui.ini
