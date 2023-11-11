@@ -1,8 +1,10 @@
 *\__pycache__
 checkpoints
+checkpoints_artur
+export
 logs
 data
 backup
 scan_data
 results
-imgui.ini
+*\imgui.ini

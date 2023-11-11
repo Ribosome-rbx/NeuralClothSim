@@ -58,7 +58,7 @@ def main(config, w=1.0):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--folder", type=str, required=True)
-    parser.add_argument("--gpu_id", type=str, default="")
+    # parser.add_argument("--gpu_id", type=str, default="")
     parser.add_argument("--motion", type=float, default=1.0)
     opts = parser.parse_args()
 
@@ -69,7 +69,7 @@ if __name__ == "__main__":
 
     # Set GPU
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-    os.environ["CUDA_VISIBLE_DEVICES"] = opts.gpu_id
+    os.environ["CUDA_VISIBLE_DEVICES"] = '0' # opts.gpu_id
 
     # Limit VRAM usage
     gpus = tf.config.experimental.list_physical_devices("GPU")

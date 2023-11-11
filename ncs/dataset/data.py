@@ -47,10 +47,10 @@ class Data(Sequence):
             ]
             self.takes = self.sequences
         
-        # if self.mode == "test":
-        #     data_dir  = f"{SCANDATASET_DIR}/{self.config.name}/Take*.npz"
-        #     self.sequences = sorted(glob.glob(data_dir))
-        #     self.takes = sorted(glob.glob(data_dir))
+        if self.mode == "test":
+            data_dir  = f"{SCANDATASET_DIR}/{self.config.name}/Take*.npz"
+            self.sequences = sorted(glob.glob(data_dir))
+            self.takes = sorted(glob.glob(data_dir))
 
 
 

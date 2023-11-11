@@ -28,7 +28,7 @@ def make_model(config):
 def main(config):
     # Remove previous runs logs and checkpoints for this experiment
     log_dir = os.path.join(LOGS_DIR, config.name) # '/home/borong/Desktop/NeuralClothSim/logs'
-    checkpoint_dir = os.path.join(CHECKPOINTS_DIR, config.name)
+    checkpoint_dir = os.path.join(CHECKPOINTS_DIR, config.name, 'epoch{epoch:04d}')
     if os.path.isdir(log_dir) or os.path.isdir(checkpoint_dir):
         print(f"There already are logs/checkpoints for an experiment with the same name. Experiment name: {config.name}")
         print("Please remove or rename the logs/checkpoints. Alternatively, rename the experiment (JSON file name).")
@@ -65,7 +65,7 @@ def main(config):
                 update_freq="epoch",
             ),
             tf.keras.callbacks.ModelCheckpoint(
-                filepath=checkpoint_dir, save_freq="epoch"
+                filepath=checkpoint_dir, save_freq=1 * len(data)
             ),
         ],
     )
