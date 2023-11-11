@@ -1,0 +1,8 @@
+__pycache__
+backup/
+checkpoints/
+checkpoints_150/
+checkpoints_25/
+data/
+logs/
+scan_data/
