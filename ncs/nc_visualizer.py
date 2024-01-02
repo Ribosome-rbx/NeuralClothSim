@@ -139,7 +139,7 @@ def visualize(viewer, results_folder, pos_index):
 
 
 def main():
-    name = "00127_upper"
+    name = "00185_lower"
     result_folders = [x[0] for x in os.walk(os.path.join(RESULTS_DIR, name))][1:]
     viewer = Viewer()
     viewer.scene.nodes = viewer.scene.nodes[:5]
